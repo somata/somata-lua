@@ -1,6 +1,7 @@
 local zmq = require 'lzmq'
-local uuid = require 'uuid'
 local cjson = require 'cjson'
+
+local helpers = require './helpers'
 
 local Connection = {}
 Connection.__index = Connection
@@ -10,14 +11,14 @@ function Connection.create(ctx, loop, connect)
     setmetatable(connection, Connection)
     connection.outstanding = {}
 
-    connection.socket = ctx:socket({zmq.DEALER, connect=connect, identity=uuid.new()})
+    connection.socket = ctx:socket({zmq.DEALER, connect=connect, identity=randomString(10)})
     loop:add_socket(connection.socket, function() connection:gotResponse() end)
 
     return connection
 end
 
 function Connection:sendMethod(method, args, cb) 
-    local id = uuid.new()
+    local id = randomString(10)
     self.outstanding[id] = cb
     local message = {id=id, kind="method", method=method, args=args}
     local message_json = cjson.encode(message)

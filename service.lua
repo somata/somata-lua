@@ -1,9 +1,9 @@
 local zmq = require 'lzmq'
 local zloop = require 'lzmq.loop'
 local zthreads = require 'lzmq.threads'
-local uuid = require 'uuid'
 local cjson = require 'cjson'
 
+local helpers = require './helpers'
 local Connection = require './connection'
 local Binding = require './binding'
 

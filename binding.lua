@@ -1,5 +1,4 @@
 local zmq = require 'lzmq'
-local uuid = require 'uuid'
 local cjson = require 'cjson'
 
 local Binding = {}
