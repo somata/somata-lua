@@ -1,14 +1,11 @@
-zmq = require 'lzmq'
-zloop = require 'lzmq.loop'
-zthreads = require 'lzmq.threads'
-uuid = require 'uuid'
+local zmq = require 'lzmq'
+local zloop = require 'lzmq.loop'
+local zthreads = require 'lzmq.threads'
+local uuid = require 'uuid'
 
-Connection = require './connection'
+local Connection = require './connection'
 
--- Client
---------------------------------------------------------------------------------
-
-Client = {}
+local Client = {}
 Client.__index = Client
 
 function Client.create()
@@ -16,7 +13,7 @@ function Client.create()
     setmetatable(client, Client)
 
     client.ctx = zmq.context()
-    client.loop = zloop.new(1, ctx)
+    client.loop = zloop.new(1, client.ctx)
     client.service_connections = {}
     client.registry_connection = Connection.create(client.ctx, client.loop, "tcp://localhost:8420")
 
