@@ -18,9 +18,14 @@ function Connection.create(ctx, loop, connect)
 end
 
 function Connection:sendMethod(method, args, cb) 
+    local message = {kind="method", method=method, args=args}
+    self:sendMessage(message, cb)
+end
+
+function Connection:sendMessage(message, cb)
     local id = randomString(10)
     self.outstanding[id] = cb
-    local message = {id=id, kind="method", method=method, args=args}
+    message.id = id
     local message_json = cjson.encode(message)
     self.socket:send(message_json)
 end

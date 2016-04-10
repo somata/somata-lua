@@ -10,11 +10,13 @@ local Binding = require './binding'
 local Service = {}
 Service.__index = Service
 
+local heartbeat_interval = 5000
+
 function Service.create(name, methods)
     local service = {}
     setmetatable(service, Service)
 
-    service.id = name .. '~' .. helpers.randomString(5)
+    service.id = helpers.randomString(5)
     service.name = name
     service.port = math.random(5000, 35000)
     service.methods = methods
@@ -24,18 +26,26 @@ function Service.create(name, methods)
     service.registry_connection = Connection.create(service.ctx, service.loop, "tcp://localhost:8420")
     service.binding = Binding.create(service.ctx, service.loop, service.port, function(client_id, message_id, method, args) service:handleMethod(client_id, message_id, method, args) end)
 
+    service.loop:add_once(heartbeat_interval, function() service:sendPing() end)
+
     return service
 end
 
 function Service:register()
     local registration = {
-        id=self.id,
+        id=self.name .. '~' .. self.id,
         name=self.name,
         port=self.port,
-        heartbeat=15000
+        heartbeat=heartbeat_interval
     }
     self.registry_connection:sendMethod('registerService', {registration}, function() end)
     self.loop:start()
+end
+
+function Service:sendPing()
+    self.registry_connection:sendMessage({kind='ping'}, function()
+        self.loop:add_once(heartbeat_interval, function() self:sendPing() end)
+    end)
 end
 
 function Service:handleMethod(client_id, message_id, method, args)
