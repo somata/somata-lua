@@ -14,9 +14,9 @@ function Service.create(name, methods)
     local service = {}
     setmetatable(service, Service)
 
-    service.id = name .. '~1'
+    service.id = name .. '~' .. helpers.randomString(5)
     service.name = name
-    service.port = 8888
+    service.port = math.random(5000, 35000)
     service.methods = methods
 
     service.ctx = zmq.context()
