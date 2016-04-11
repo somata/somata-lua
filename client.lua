@@ -7,12 +7,16 @@ local Connection = require './connection'
 local Client = {}
 Client.__index = Client
 
-function Client.create()
+function Client.create(loop)
     local client = {}
     setmetatable(client, Client)
 
     client.ctx = zmq.context()
-    client.loop = zloop.new(1, client.ctx)
+    if loop == nil then
+        client.loop = zloop.new(1, client.ctx)
+    else
+        client.loop = loop
+    end
     client.service_connections = {}
     client.registry_connection = Connection.create(client.ctx, client.loop, "tcp://localhost:8420")
 
