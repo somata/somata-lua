@@ -16,7 +16,7 @@ function Service.create(name, methods)
     local service = {}
     setmetatable(service, Service)
 
-    service.id = helpers.randomString(5)
+    service.id = name .. '~' .. helpers.randomString(5)
     service.name = name
     service.port = math.random(5000, 35000)
     service.methods = methods
@@ -31,14 +31,14 @@ function Service.create(name, methods)
     return service
 end
 
-function Service:register()
+function Service:register(cb)
     local registration = {
-        id=self.name .. '~' .. self.id,
+        id=self.id,
         name=self.name,
         port=self.port,
         heartbeat=heartbeat_interval
     }
-    self.registry_connection:sendMethod('registerService', {registration}, function() end)
+    self.registry_connection:sendMethod('registerService', {registration}, cb)
     self.loop:start()
 end
 
