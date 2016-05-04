@@ -35,7 +35,10 @@ function Connection:gotResponse()
     if not message_json then return nil end
 
     local message = cjson.decode(message_json)
-    self.outstanding[message.id](nil, message.response)
+    local outstanding_cb = self.outstanding[message.id]
+    if outstanding_cb ~= nil then
+        outstanding_cb(nil, message.response)
+    end
 end
 
 return Connection
