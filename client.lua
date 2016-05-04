@@ -1,6 +1,5 @@
 local zmq = require 'lzmq'
 local zloop = require 'lzmq.loop'
-local zthreads = require 'lzmq.threads'
 
 local Connection = require './connection'
 

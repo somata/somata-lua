@@ -21,7 +21,7 @@ function Binding:gotMessage()
     if not message_json then return nil end
 
     local message = cjson.decode(message_json)
-    self.onMessage(client_id, message.id, message.method, message.args)
+    self.onMessage(client_id, message)
 end
 
 return Binding
