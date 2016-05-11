@@ -9,9 +9,7 @@ local Binding = require './binding'
 local Service = {}
 Service.__index = Service
 
-local heartbeat_interval = 5000
-
-function Service.create(name, methods)
+function Service.create(name, methods, options)
     local service = {}
     setmetatable(service, Service)
 
@@ -20,13 +18,22 @@ function Service.create(name, methods)
     service.port = math.random(5000, 35000)
     service.methods = methods
     service.subscriptions = {}
+    service.heartbeat = 5000
+
+    if options ~= nil then
+        if options.heartbeat ~= nil then
+            service.heartbeat = options.heartbeat
+        end
+    end
 
     service.ctx = zmq.context()
     service.loop = zloop.new(1, service.ctx)
     service.registry_connection = Connection.create(service.ctx, service.loop, "tcp://localhost:8420")
     service.binding = Binding.create(service.ctx, service.loop, service.port, function(client_id, message) service:handleMessage(client_id, message) end)
 
-    service.loop:add_once(heartbeat_interval, function() service:sendPing() end)
+    if service.heartbeat > 0 then
+        service.loop:add_once(service.heatbeat, function() service:sendPing() end)
+    end
 
     return service
 end
@@ -36,16 +43,15 @@ function Service:register(cb)
         id=self.id,
         name=self.name,
         port=self.port,
-        heartbeat=0
+        heartbeat=self.heartbeat
     }
-        -- heartbeat=heartbeat_interval
     self.registry_connection:sendMethod('registerService', {registration}, cb)
     self.loop:start()
 end
 
 function Service:sendPing()
     self.registry_connection:sendMessage({kind='ping'}, function()
-        self.loop:add_once(heartbeat_interval, function() self:sendPing() end)
+        self.loop:add_once(self.heartbeat, function() self:sendPing() end)
     end)
 end
 
