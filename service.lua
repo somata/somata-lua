@@ -32,7 +32,7 @@ function Service.create(name, methods, options)
     service.binding = Binding.create(service.ctx, service.loop, service.port, function(client_id, message) service:handleMessage(client_id, message) end)
 
     if service.heartbeat > 0 then
-        service.loop:add_once(service.heatbeat, function() service:sendPing() end)
+        service.loop:add_once(service.heartbeat, function() service:sendPing() end)
     end
 
     return service
@@ -80,7 +80,6 @@ function Service:handleMethod(client_id, message_id, method, args)
 end
 
 function Service:handleSubscribe(client_id, message_id, event_type)
-    print("subscribing to", event_type)
     if self.subscriptions[event_type] == nil then
         self.subscriptions[event_type] = {}
     end
