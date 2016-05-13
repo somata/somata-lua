@@ -1,6 +1,7 @@
 local zmq = require 'lzmq'
 local zloop = require 'lzmq.loop'
 local cjson = require 'cjson'
+local signal = require 'posix.signal'
 
 local helpers = require './helpers'
 local Connection = require './connection'
@@ -47,6 +48,12 @@ function Service:register(cb)
     }
     self.registry_connection:sendMethod('registerService', {registration}, function()
         print(string.format("Registered %s on :%d", self.id, self.port))
+    end)
+
+    -- Deregister handler
+    signal.signal(signal.SIGINT, function (signum)
+        print(string.format("Deregistering %s...", self.id))
+        self.registry_connection:sendMethod('deregisterService', {self.name, self.id})
     end)
 
     self.loop:start()
