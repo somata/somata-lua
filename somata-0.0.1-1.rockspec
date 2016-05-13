@@ -1,9 +1,9 @@
 package = "somata"
-version = "0.0.1"
+version = "0.0.1-1"
 
 source = {
     url = "git://github.com/somata/somata-lua",
-    tag = "v0.0.1"
+    tag = "v0.0.1-1"
 }
 
 description = {
@@ -13,7 +13,7 @@ description = {
 
 dependencies = {
     "lua ~> 5.1",
-    "lzmq >= 0.4.3-1"
+    "lzmq >= 0.4.3-1",
     "luaposix >= 33.4.0-1"
 }
 
