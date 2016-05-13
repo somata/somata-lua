@@ -45,7 +45,10 @@ function Service:register(cb)
         port=self.port,
         heartbeat=self.heartbeat
     }
-    self.registry_connection:sendMethod('registerService', {registration}, cb)
+    self.registry_connection:sendMethod('registerService', {registration}, function()
+        print(string.format("Registered %s on :%d", self.id, self.port))
+    end)
+
     self.loop:start()
 end
 
