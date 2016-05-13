@@ -20,6 +20,11 @@ dependencies = {
 build = {
     type = "builtin",
     modules = {
-        ["somata"] = "init.lua"
+        "somata" = "init.lua",
+        ["somata.client"] = "client.lua",
+        ["somata.service"] = "service.lua",
+        ["somata.connection"] = "connection.lua",
+        ["somata.binding"] = "binding.lua",
+        ["somata.helpers"] = "helpers.lua"
     }
 }
