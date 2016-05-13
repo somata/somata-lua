@@ -51,12 +51,16 @@ function Service:register(cb)
     end)
 
     -- Deregister handler
-    signal.signal(signal.SIGINT, function (signum)
-        print(string.format("Deregistering %s...", self.id))
-        self.registry_connection:sendMethod('deregisterService', {self.name, self.id})
-    end)
+    deregister = function() self:deregister() end
+    signal.signal(signal.SIGINT, deregister)
+    signal.signal(signal.SIGTERM, deregister)
 
     self.loop:start()
+end
+
+function Service:deregister()
+    print(string.format("Deregistering %s...", self.id))
+    self.registry_connection:sendMethod('deregisterService', {self.name, self.id})
 end
 
 function Service:sendPing()
