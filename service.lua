@@ -2,10 +2,9 @@ local zmq = require 'lzmq'
 local zloop = require 'lzmq.loop'
 local cjson = require 'cjson'
 local signal = require 'posix.signal'
-
-local helpers = require './helpers'
-local Connection = require './connection'
-local Binding = require './binding'
+local helpers = require 'somata.helpers'
+local Connection = require 'somata.connection'
+local Binding = require 'somata.binding'
 
 local Service = {}
 Service.__index = Service

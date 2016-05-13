@@ -1,5 +1,5 @@
-local Client = require './client'
-local Service = require './service'
+local Client = require 'somata.client'
+local Service = require 'somata.service'
 
 return {
     Client=Client,

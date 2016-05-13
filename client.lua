@@ -1,7 +1,6 @@
 local zmq = require 'lzmq'
 local zloop = require 'lzmq.loop'
-
-local Connection = require './connection'
+local Connection = require 'somata.connection'
 
 local Client = {}
 Client.__index = Client

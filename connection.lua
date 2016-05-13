@@ -1,7 +1,7 @@
 local zmq = require 'lzmq'
 local cjson = require 'cjson'
 
-local helpers = require './helpers'
+local helpers = require 'somata.helpers'
 
 local Connection = {}
 Connection.__index = Connection
