@@ -79,11 +79,20 @@ end
 
 function Service:handleMethod(client_id, message_id, method, args)
     function cb(err, data)
-        local response = {
-            id=message_id,
-            kind='response',
-            response=data
-        }
+        local response
+        if err ~= nil then
+            response = {
+                id=message_id,
+                kind='error',
+                error=err
+            }
+        else
+            response = {
+                id=message_id,
+                kind='response',
+                response=data
+            }
+        end
         local response_json = cjson.encode(response)
         self.binding.socket:sendx(client_id, response_json)
     end
