@@ -28,17 +28,19 @@ function Service.create(name, methods, options)
 
     service.ctx = zmq.context()
     service.loop = zloop.new(1, service.ctx)
-    service.registry_connection = Connection.create(service.ctx, service.loop, "tcp://localhost:8420")
+    service.registry_connection = Connection.create(service.ctx, service.loop, "tcp://localhost:8420", 'registry')
     service.binding = Binding.create(service.ctx, service.loop, service.port, function(client_id, message) service:handleMessage(client_id, message) end)
 
     if service.heartbeat > 0 then
-        service.loop:add_once(service.heartbeat, function() service:sendPing() end)
+        service:sendPing()
     end
+
+    service.loop:start()
 
     return service
 end
 
-function Service:register(cb)
+function Service:register()
     local registration = {
         id=self.id,
         name=self.name,
@@ -53,8 +55,6 @@ function Service:register(cb)
     deregister = function() self:deregister() end
     signal.signal(signal.SIGINT, deregister)
     signal.signal(signal.SIGTERM, deregister)
-
-    self.loop:start()
 end
 
 function Service:deregister()
@@ -63,13 +63,20 @@ function Service:deregister()
 end
 
 function Service:sendPing()
-    self.registry_connection:sendMessage({kind='ping'}, function()
+    local ping = 'ping'
+    if self.ping_id == nil then
+        self.ping_id = helpers.randomString(8)
+        ping = 'hello'
+    end
+    self.registry_connection:sendMessage({kind='ping', ping=ping, id=self.ping_id}, function(err, pong)
+        if pong == 'welcome' then
+            self:register()
+        end
         self.loop:add_once(self.heartbeat, function() self:sendPing() end)
     end)
 end
 
 function Service:handleMessage(client_id, message)
-    print('[handleMessage]', client_id, message)
     if message.kind == 'method' then
         self:handleMethod(client_id, message.id, message.method, message.args)
     elseif message.kind == 'subscribe' then
@@ -96,8 +103,8 @@ function Service:handleMethod(client_id, message_id, method, args)
         local response_json = cjson.encode(response)
         self.binding.socket:sendx(client_id, response_json)
     end
+    print('[handleMethod]', client_id, method, args)
     table.insert(args, cb)
-    print('[handleMethod]', method, args)
     self.methods[method](unpack(args))
 end
 
@@ -105,6 +112,7 @@ function Service:handleSubscribe(client_id, message_id, event_type)
     if self.subscriptions[event_type] == nil then
         self.subscriptions[event_type] = {}
     end
+    print('[handleSubscribe]', client_id, event_type)
     table.insert(self.subscriptions[event_type], {client_id, message_id})
 end
 

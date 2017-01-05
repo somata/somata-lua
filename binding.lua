@@ -21,7 +21,21 @@ function Binding:gotMessage()
     if not message_json then return nil end
 
     local message = cjson.decode(message_json)
-    self.onMessage(client_id, message)
+
+    if message.kind == 'ping' then
+        self:gotPing(client_id, message)
+    else
+        self.onMessage(client_id, message)
+    end
+end
+
+function Binding:gotPing(client_id, message)
+    pong = {
+        id = message.id,
+        ping = 'pong'
+    }
+    local pong_json = cjson.encode(pong)
+    self.socket:sendx(client_id, pong_json)
 end
 
 return Binding
