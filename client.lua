@@ -24,7 +24,7 @@ function Client.create(loop, registry_host)
     end
 
     client.service_connections = {}
-    client.registry_connection = Connection.create(client.ctx, client.loop, "tcp://" .. client.registry_host .. ":8420")
+    client.registry_connection = Connection.create(client.ctx, client.loop, "tcp://" .. client.registry_host .. ":8420", 'registry')
 
     return client
 end
@@ -45,7 +45,17 @@ function Client:getConnection(service_name, cb)
     end
 end
 
-function Client:remote(service_name, method, args, cb)
+function splitArgs(arg)
+    local args = {}
+    for i = 1, #arg - 1 do
+        table.insert(args, arg[i])
+    end
+    local cb = arg[#arg]
+    return args, cb
+end
+
+function Client:remote(service_name, method, ...)
+    local args, cb = splitArgs(arg)
     self:getConnection(service_name, function (err, service_connection)
         if service_connection ~= nil then
             service_connection:sendMethod(method, args, cb)
