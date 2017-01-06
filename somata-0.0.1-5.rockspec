@@ -1,9 +1,9 @@
 package = "somata"
-version = "0.0.1-4"
+version = "0.0.1-5"
 
 source = {
     url = "git://github.com/somata/somata-lua",
-    tag = "v0.0.1-4"
+    tag = "v0.0.1-5"
 }
 
 description = {
