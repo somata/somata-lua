@@ -1,8 +1,10 @@
+![](https://i.imgur.com/Xt8Ujn8.png)
+
 # Somata for Lua
 
 Somata is a framework for building networked microservices, supporting both remote procedure call (RPC) and publish-subscribe models of communication. This is the Lua version of the library, see also [somata-node](https://github.com/somata/somata-node) and [somata-python](https://github.com/somata/somata-python).
 
-*Note:* This implementation of the [Somata Protocol]() is incomplete - it supports remote method calls but not event subscriptions.
+*Note:* This implementation of the [Somata Protocol](https://github.com/somata/somata-protocol) is incomplete - it supports remote method calls but not event subscriptions.
 
 ## Installation
 
@@ -13,6 +15,8 @@ $ luarocks install somata
 ```
 
 ## Getting started
+
+![](https://i.imgur.com/mryWajd.png)
 
 First make sure the Registry is [installed](https://github.com/somata/somata-registry#installation) and running:
 
