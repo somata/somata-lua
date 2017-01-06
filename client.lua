@@ -45,17 +45,7 @@ function Client:getConnection(service_name, cb)
     end
 end
 
-function splitArgs(arg)
-    local args = {}
-    for i = 1, #arg - 1 do
-        table.insert(args, arg[i])
-    end
-    local cb = arg[#arg]
-    return args, cb
-end
-
-function Client:remote(service_name, method, ...)
-    local args, cb = splitArgs(arg)
+function Client:remote(service_name, method, args, cb)
     self:getConnection(service_name, function (err, service_connection)
         if service_connection ~= nil then
             service_connection:sendMethod(method, args, cb)

@@ -39,7 +39,7 @@ local service = somata.Service.create('hello', {
 
 Create a Client using `somata.Client.create()`.
 
-Call a remote method of a Service using `client.remote(service, method, args..., cb)`. The callback function takes two argments, `err` and `response`.
+Call a remote method of a Service using `client.remote(service, method, args, cb)`. The callback function takes two argments, `err` and `response`.
 
 This example (see [examples/hello-client.lua](https://github.com/somata/somata-lua/blob/master/examples/hello-client.lua)) connects to the "hello" service, and calls the `sayHello` method:
 
@@ -48,7 +48,7 @@ local somata = require 'somata'
 
 local client = somata.Client.create()
 
-client:remote("hello", "sayHello", "world", function(err, response)
+client:remote("hello", "sayHello", {"world"}, function(err, response)
     print('Got response:', response)
 end)
 
